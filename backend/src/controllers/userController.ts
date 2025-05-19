@@ -11,3 +11,7 @@ export async function createUser(req:Request, res:Response){
         res.json({error: err.message})
     }
 }
+export async function deleteUser(req:Request, res:Response){
+    const user = await User.findById(req.params.id)
+    
+}
