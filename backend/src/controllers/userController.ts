@@ -15,7 +15,7 @@ export async function deleteUser(req: Request, res:Response){
     try {
         const user = await User.findByIdAndDelete(req.params.id);
         if (!user){ res.status(404).json({ error: 'User not found' })}
-        res.status(200).json({ message: `${user?.name} deleted` });
+        res.status(200).json({ message: `user ${user?.name} deleted successfully` });
     } catch (e: any) {
         res.status(500).json({ error: e.message });
     }
@@ -36,6 +36,7 @@ export async function updateUsers(req:Request, res:Response){
     try{
 
         const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true})
+        res.status(200).json("profile updated successfully")
         
     }catch(err:any){
         res.json(err)
