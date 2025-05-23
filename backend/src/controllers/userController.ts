@@ -1,9 +1,11 @@
 import { Request, Response} from 'express'
 import User from '../models/User';
-
+import bcrypt from 'bcrypt'
 export async function createUser(req:Request, res:Response){
     try{
-        const user = new User(req.body)
+        const {name, email,password, username, age} = req.body
+        const hashed = await bcrypt.hash(password, 10)
+        const user = new User({name, email, age, password: hashed, username})
         const saved = await user.save()
         res.status(201).json(saved);
     }
