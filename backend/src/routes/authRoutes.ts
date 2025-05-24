@@ -7,3 +7,4 @@ router.post('/login', login)
 router.post('/logout', logout)
 router.get('/me',requireAuth, getLoggedinUser)
 
+export default router
