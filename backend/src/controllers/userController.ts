@@ -1,6 +1,8 @@
 import { Request, Response} from 'express'
 import User from '../models/User';
 import bcrypt from 'bcrypt'
+
+
 export async function createUser(req:Request, res:Response){
     try{
         const {name, email,password, username, age} = req.body
@@ -16,7 +18,10 @@ export async function createUser(req:Request, res:Response){
 export async function deleteUser(req: Request, res:Response){    
     try {
         const user = await User.findByIdAndDelete(req.params.id);
-        if (!user){ res.status(404).json({ error: 'User not found' })}
+        if (!user){
+             res.status(404).json({ error: 'User not found' })
+            return
+            }
         res.status(200).json({ message: `user ${user?.name} deleted successfully` });
     } catch (e: any) {
         res.status(500).json({ error: e.message });
@@ -36,9 +41,8 @@ export async function getUsers(req:Request, res:Response){
 }
 export async function updateUsers(req:Request, res:Response){
     try{
-
         const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true})
-        res.status(200).json("profile updated successfully")
+        res.status(200).json({message: "profile updated successfully", user:user})
         
     }catch(err:any){
         res.json(err)
