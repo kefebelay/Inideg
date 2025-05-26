@@ -17,7 +17,9 @@ export async function login(req: Request, res: Response) {
       res.json({ message: "Invalid cridentials", isMatch: isMatch });
       return;
     }
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -25,7 +27,7 @@ export async function login(req: Request, res: Response) {
       sameSite: "lax",
       maxAge: 60 * 60 * 1000,
     });
-    res.json("Welcome back");
+    res.json({ message: "Welcome back", user: user });
   } catch (err: any) {
     res.json({ error: err });
   }

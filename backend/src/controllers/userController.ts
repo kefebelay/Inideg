@@ -4,9 +4,17 @@ import bcrypt from "bcrypt";
 
 export async function createUser(req: Request, res: Response) {
   try {
-    const { name, email, password, username, age } = req.body;
+    const { name, email, password, username, age, role, extraData } = req.body;
     const hashed = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, age, password: hashed, username });
+    const user = new User({
+      name,
+      email,
+      age,
+      password: hashed,
+      username,
+      role,
+    });
+    if (role === "business") user.business = extraData;
     const saved = await user.save();
     res.status(201).json(saved);
   } catch (err: any) {
