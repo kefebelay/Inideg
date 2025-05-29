@@ -47,7 +47,7 @@ export async function getUsers(req: Request, res: Response) {
     res.json(err);
   }
 }
-export async function updateUsers(req: Request, res: Response) {
+export async function updateUser(req: Request, res: Response) {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,

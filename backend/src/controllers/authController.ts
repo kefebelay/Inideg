@@ -9,12 +9,12 @@ export async function login(req: Request, res: Response) {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      res.json({ message: "user not found" });
+      res.json({ message: "incorrect email or password" });
       return;
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.json({ message: "Invalid cridentials", isMatch: isMatch });
+      res.json({ message: "incorrect email or password", isMatch: isMatch });
       return;
     }
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
