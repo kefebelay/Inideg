@@ -3,6 +3,11 @@ import mongoose, { InferSchemaType, model } from "mongoose";
 const businessSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     profile: { type: String },
     location: {
       address: { type: String, required: true },
