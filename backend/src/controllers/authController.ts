@@ -9,12 +9,14 @@ export async function login(req: Request, res: Response) {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      res.json({ message: "incorrect email or password" });
+      res.status(401).json({ message: "incorrect email or password" });
       return;
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.json({ message: "incorrect email or password", isMatch: isMatch });
+      res
+        .status(401)
+        .json({ message: "incorrect email or password", isMatch: isMatch });
       return;
     }
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
@@ -27,17 +29,17 @@ export async function login(req: Request, res: Response) {
       sameSite: "lax",
       maxAge: 60 * 60 * 1000,
     });
-    res.json({ message: "Welcome back", user: user });
+    res.status(200).json({ message: "Welcome back", user: user });
   } catch (err: any) {
-    res.json({ error: err });
+    res.status(500).json({ error: err });
   }
 }
 
 export async function logout(req: Request, res: Response) {
   res.clearCookie("token");
-  res.json({ message: "Logged out successfully" });
+  res.status(200).json({ message: "Logged out successfully" });
 }
 export async function getLoggedinUser(req: Request, res: Response) {
   const user = await User.findById((req as any).user.id).select("-password");
-  res.json(user);
+  res.status(200).json(user);
 }

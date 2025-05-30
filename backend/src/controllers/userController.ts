@@ -18,7 +18,7 @@ export async function createUser(req: Request, res: Response) {
     const saved = await user.save();
     res.status(201).json(saved);
   } catch (err: any) {
-    res.json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
 export async function deleteUser(req: Request, res: Response) {
@@ -56,6 +56,6 @@ export async function updateUser(req: Request, res: Response) {
       .status(200)
       .json({ message: "profile updated successfully", user: user });
   } catch (err: any) {
-    res.json(err);
+    res.status(500).json(err);
   }
 }
