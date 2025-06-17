@@ -1,25 +1,85 @@
+"use client";
+
 import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ThemeSwitcher from "../common/ThemeSwitcher";
+import Hamburger from "@/components/user/Hamburger";
+import { RootState } from "@/lib/store";
+import Logout from "@/lib/Logout";
+import { useAppSelector } from "@/lib/hooks";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function Navbar() {
+  const { user } = useAppSelector((state: RootState) => state.user);
+  const pathname = usePathname();
+
+  const navLinks = [
+    { label: "Home", href: "/home" },
+    { label: "Categories", href: "/categories" },
+    { label: "Businesses", href: "/businesses" },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
   return (
-    <div className="flex w-full bg-transparent fixed justify-between">
-      <p className="md:mt-6 md:ml-10">Inideg</p>
-      <div className="md:flex hidden justify-between gap-3 mt-6 px-10 ml-20 text-md w-full">
-        <div>
-          <ul className="flex justify-between gap-3">
-            <li>Home</li>
-            <li>Categories</li>
-            <li>Businesses</li>
+    <div className="fixed top-0 w-full z-50 backdrop-blur border-b border-border bg-background/70 text-foreground transition-all duration-300">
+      {/* Desktop */}
+      <div className="hidden md:flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+        <Link href="/" className="text-xl font-bold tracking-wide">
+          Inideg
+        </Link>
+
+        <ul className="flex items-center space-x-6 text-base font-medium">
+          {navLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={`transition hover:text-primary ${
+                  isActive(link.href)
+                    ? "text-primary font-semibold"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+          <li>
             <ThemeSwitcher />
-          </ul>
-        </div>
+          </li>
+        </ul>
+
+        {user ? (
+          <Logout />
+        ) : (
+          <div className="flex items-center space-x-3">
+            <Link
+              href="/auth/sign-up"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Sign Up
+            </Link>
+            <Link
+              href="/auth/login"
+              className={buttonVariants({ variant: "default" })}
+            >
+              Login
+            </Link>
+          </div>
+        )}
       </div>
-      <div className=" justify-between gap-3 md:flex hidden mt-6">
-        <p>Login</p>
-        <p>Sign Up</p>
+
+      {/* Mobile */}
+      <div className="flex md:hidden justify-between items-center px-6 py-4">
+        <Link href="/" className="text-xl font-bold tracking-wide">
+          Inideg
+        </Link>
+        <Hamburger />
       </div>
-      <div className="md:hidden flex px-20">|||</div>
     </div>
   );
 }
