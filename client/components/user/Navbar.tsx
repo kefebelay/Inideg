@@ -6,12 +6,14 @@ import { usePathname } from "next/navigation";
 import ThemeSwitcher from "../common/ThemeSwitcher";
 import Hamburger from "@/components/user/Hamburger";
 import { RootState } from "@/lib/store";
-import Logout from "@/lib/Logout";
+import Logout from "@/components/Logout";
 import { useAppSelector } from "@/lib/hooks";
 import { buttonVariants } from "@/components/ui/button";
+import { UserIcon } from "lucide-react";
 
 export default function Navbar() {
   const { user } = useAppSelector((state: RootState) => state.user);
+  console.log(user);
   const pathname = usePathname();
 
   const navLinks = [
@@ -54,7 +56,13 @@ export default function Navbar() {
         </ul>
 
         {user ? (
-          <Logout />
+          <div className="flex gap-5">
+            <div className="flex-col items-center hover:cursor-pointer">
+              <UserIcon className="text-primary" />
+              <p className="text-primary font-extrabold">{user.username}</p>
+            </div>
+            <Logout />
+          </div>
         ) : (
           <div className="flex items-center space-x-3">
             <Link

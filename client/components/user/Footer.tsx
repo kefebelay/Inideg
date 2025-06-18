@@ -7,9 +7,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
         {/* Left Side */}
         <div className="text-center md:text-left">
-          <p>
-            &copy; {new Date().getFullYear()} YourCompany. All rights reserved.
-          </p>
+          <p>&copy; {new Date().getFullYear()} Inideg. All rights reserved.</p>
         </div>
 
         {/* Right Side - Links */}

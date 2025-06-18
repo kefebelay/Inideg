@@ -7,7 +7,7 @@ import ThemeSwitcher from "../common/ThemeSwitcher";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
-import { LogOut } from "lucide-react";
+import Logout from "@/components/Logout";
 
 export default function Hamburger() {
   const [isOpen, setIsOpen] = useState(false);
@@ -108,7 +108,7 @@ export default function Hamburger() {
                   </li>
                   <li>
                     <Link
-                      href={"/signup"}
+                      href={"/auth/sign-up"}
                       className="block hover:text-primary transition-colors"
                       onClick={closeMenu}
                     >
@@ -121,11 +121,7 @@ export default function Hamburger() {
           </nav>
           <div className="mt-auto pt-4 border-t border-border flex justify-between">
             <ThemeSwitcher />
-            {user && (
-              <button>
-                <LogOut className="text-red-500" />
-              </button>
-            )}
+            {user && <Logout />}
           </div>
         </div>
       </aside>

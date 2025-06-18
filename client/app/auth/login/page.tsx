@@ -5,16 +5,67 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { toast } from "react-toastify";
+import Axios from "@/lib/axios";
+import { useAppDispatch } from "@/lib/hooks";
+import { fetchCurrentUser } from "@/lib/features/user/userSlice";
 
 export default function LoginPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("logged in successfully");
-    console.log("loggedin");
+
+    try {
+      if (!email || !password) {
+        setError("Email and password are required.");
+        return;
+      }
+
+      if (!/\S+@\S+\.\S+/.test(email)) {
+        setError("Please enter a valid email address.");
+        return;
+      }
+
+      setError("");
+
+      const res = await Axios.post("/auth/login", { email, password });
+
+      if (res.status === 200) {
+        const resultAction = await dispatch(fetchCurrentUser());
+        if (fetchCurrentUser.fulfilled.match(resultAction)) {
+          const user = resultAction.payload;
+
+          if (user.role === "admin") {
+            router.push("/admin/dashboard");
+          } else if (user.role === "user") {
+            router.push("/home");
+          } else {
+            router.push("/other-role");
+          }
+        }
+
+        toast.success("Logged in successfully!");
+        router.push("/home");
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
+
+      console.log("Login response:", res.data);
+    } catch (err: any) {
+      console.error("Login error:", err);
+
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
+
+      toast.error("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -52,6 +103,12 @@ export default function LoginPage() {
             />
           </div>
 
+          {error && (
+            <small className="block text-sm text-red-500 text-center">
+              {error}
+            </small>
+          )}
+
           <button
             type="submit"
             className={buttonVariants({
@@ -65,7 +122,7 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{" "}
-          <Link href="/signup" className="text-primary hover:underline">
+          <Link href="/auth/sign-up" className="text-primary hover:underline">
             Sign up
           </Link>
         </p>

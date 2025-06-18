@@ -20,7 +20,8 @@ export const fetchCurrentUser = createAsyncThunk(
   "user/fetchCurrentUser",
   async () => {
     try {
-      const res = await Axios.get("/user/me");
+      const res = await Axios.get("/auth/me", { withCredentials: true });
+
       return res.data;
     } catch (err) {
       console.log("user Slice error||||" + err);
