@@ -17,9 +17,9 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    if (!user || user.role === "user") {
-      router.push("/home");
-    }
+    // if (!user || user.role === "user") {
+    //   router.push("/home");
+    // }
   }, [status, user, router]);
 
   return <>{children}</>;
