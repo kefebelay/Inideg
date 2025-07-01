@@ -39,6 +39,7 @@ export default function Users() {
       setUsers(res.data.users);
     } catch (error) {
       toast.error("Failed to load users");
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -80,6 +81,7 @@ export default function Users() {
             <SelectItem value="all">All Roles</SelectItem>
             <SelectItem value="user">User</SelectItem>
             <SelectItem value="admin">Admin</SelectItem>
+            <SelectItem value="business">Business</SelectItem>
           </SelectContent>
         </Select>
       </div>

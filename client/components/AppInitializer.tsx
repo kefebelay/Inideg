@@ -13,7 +13,13 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
   const router = useRouter();
   const pathname = usePathname();
   const { user, status } = useSelector((state: RootState) => state.user);
-
+  const publicRoutes = [
+    "/",
+    "/auth/login",
+    "/auth/sign-up",
+    "/home",
+    pathname.startsWith("/categories"),
+  ];
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
@@ -27,6 +33,9 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
       } else if (user.role === "business") {
         router.replace("/business");
       }
+    }
+    if (status === "loading" && !publicRoutes.includes(pathname)) {
+      router.replace("/home");
     }
   }, [status, user, pathname, router]);
 
