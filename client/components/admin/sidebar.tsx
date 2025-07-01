@@ -117,10 +117,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-background shadow-sm">
           <div className="flex items-center gap-4">
             {!sidebarOpen && (
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="hidden md:block"
-              >
+              <button onClick={() => setSidebarOpen(true)} className="">
                 <Menu className="w-6 h-6 cursor-pointer" />
               </button>
             )}
