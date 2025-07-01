@@ -1,8 +1,9 @@
 "use client";
+
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
-import type { AppDispatch, RootState } from "@/lib/store"; // Adjust import paths as needed
+import { usePathname, useRouter } from "next/navigation";
+import type { AppDispatch, RootState } from "@/lib/store";
 import { fetchCurrentUser } from "@/lib/features/user/userSlice";
 
 const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
@@ -10,6 +11,7 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
+  const pathname = usePathname();
   const { user, status } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
@@ -17,10 +19,16 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    // if (!user || user.role === "user") {
-    //   router.push("/home");
-    // }
-  }, [status, user, router]);
+    if (status === "authenticated" && pathname === "/") {
+      if (!user || user.role === "user") {
+        router.replace("/home");
+      } else if (user.role === "admin") {
+        router.replace("/admin");
+      } else if (user.role === "business") {
+        router.replace("/business");
+      }
+    }
+  }, [status, user, pathname, router]);
 
   return <>{children}</>;
 };

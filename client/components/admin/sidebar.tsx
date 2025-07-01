@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Ubuntu } from "next/font/google";
 import {
   Menu,
   X,
@@ -14,11 +15,18 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
+import { cn } from "@/lib/utils";
+import Logout from "../Logout";
+
+const ubuntu = Ubuntu({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+});
 
 const sidebarItems = [
   {
     name: "Dashboard",
-    href: "/admin",
+    href: "/admin/dashboard",
     icon: <LayoutDashboard className="w-6 h-6" />,
   },
   {
@@ -41,20 +49,26 @@ const sidebarItems = [
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = () => {
     console.log("Logging out...");
-    router.push("/login");
+    router.push("/auth/login");
   };
 
   return (
-    <div className="flex h-screen bg-muted text-foreground">
+    <div
+      className={cn("flex h-screen bg-muted text-foreground", ubuntu.className)}
+    >
+      {/* Sidebar */}
       <aside
-        className={`${
-          sidebarOpen ? "w-62" : "w-16"
-        } bg-card text-card-foreground transition-all duration-300 border-r border-border flex flex-col justify-between`}
+        className={cn(
+          sidebarOpen ? "w-62" : "w-16",
+          "bg-card text-card-foreground transition-all duration-300 border-r border-border flex flex-col justify-between"
+        )}
       >
         <div>
+          {/* Top Logo & Toggle */}
           <div className="flex items-center justify-between p-4">
             <span className="text-2xl font-bold whitespace-nowrap overflow-hidden transition-all duration-300">
               {sidebarOpen ? "" : "I"}
@@ -69,33 +83,36 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             )}
           </div>
 
+          {/* Navigation Links */}
           <nav className="space-y-2 px-2 mt-4 md:mt-20">
-            {sidebarItems.map((item) => (
-              <Link key={item.name} href={item.href}>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-4 px-5 py-4 rounded-xl text-lg hover:bg-primary/10 transition cursor-pointer"
-                >
-                  {item.icon}
-                  {sidebarOpen && <span>{item.name}</span>}
-                </Button>
-              </Link>
-            ))}
+            {sidebarItems.map((item) => {
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link key={item.name} href={item.href}>
+                  <Button
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start gap-4 px-5 py-4 rounded-xl text-lg hover:bg-primary/10 transition cursor-pointer",
+                      isActive &&
+                        "bg-primary/10 text-primary font-semibold border-l-4 border-primary"
+                    )}
+                  >
+                    {item.icon}
+                    {sidebarOpen && <span>{item.name}</span>}
+                  </Button>
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
+        {/* Logout */}
         <div className="p-4">
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            className="w-full justify-start gap-4 px-5 py-4 rounded-xl text-lg hover:bg-destructive/10 text-destructive cursor-pointer"
-          >
-            <LogOut className="w-6 h-6" />
-            {sidebarOpen && <span>Logout</span>}
-          </Button>
+          <Logout />
         </div>
       </aside>
 
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-background shadow-sm">
           <div className="flex items-center gap-4">

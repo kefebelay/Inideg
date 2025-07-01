@@ -16,7 +16,7 @@ export async function createCategory(req: Request, res: Response) {
     }
     res.status(201).json({ message: `Category created`, category: category });
   } catch (err: any) {
-    res.status(500).json({ error: err });
+    res.status(500).json({ error: err.message });
   }
 }
 export async function getCategories(req: Request, res: Response) {
