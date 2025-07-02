@@ -25,8 +25,13 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    if (status === "authenticated" && pathname === "/") {
-      if (!user || user.role === "user") {
+    if (pathname === "/") {
+      router.replace("/home");
+    }
+    if (status === "authenticated" && pathname === "/home") {
+      if (!user) {
+        router.replace("/home");
+      } else if (user.role === "user") {
         router.replace("/home");
       } else if (user.role === "admin") {
         router.replace("/admin");

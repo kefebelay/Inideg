@@ -3,6 +3,7 @@ import mongoose, { InferSchemaType, model } from "mongoose";
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    profile: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -13,11 +14,6 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     age: { type: Number, required: true },
-
-    //Role specific fields
-    business: {
-      address: String,
-    },
   },
   { timestamps: true }
 );

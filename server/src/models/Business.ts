@@ -8,9 +8,9 @@ const businessSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    likes: { type: mongoose.Schema.Types.ObjectId, ref: "Like" },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "like" }],
     views: { type: Number, default: 0 },
-    profile: { type: String },
+    profile: { type: [String], required: true },
     location: {
       address: { type: String, required: true },
       city: { type: String, required: true },
@@ -23,7 +23,7 @@ const businessSchema = new mongoose.Schema(
     description: { type: String, required: true },
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "category",
     },
   },
   { timestamps: true }

@@ -7,6 +7,7 @@ import { useDropzone } from "react-dropzone";
 import { buttonVariants } from "@/components/ui/button";
 import Axios from "@/lib/axios";
 import { toast } from "react-toastify";
+import { InfoIcon } from "lucide-react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function SignupPage() {
   const [profile, setProfile] = useState<File | null>(null);
   const [error, setError] = useState("");
 
-  // Dropzone setup for profile image
+  // Dropzone setup
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       setProfile(acceptedFiles[0]);
@@ -27,7 +28,9 @@ export default function SignupPage() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "image/*": [] },
+    accept: {
+      "image/*": [],
+    },
     maxFiles: 1,
   });
 
@@ -46,8 +49,8 @@ export default function SignupPage() {
       }
 
       const ageNumber = Number(age);
-      if (isNaN(ageNumber) || ageNumber < 12) {
-        setError("You must be at least 12 years old.");
+      if (isNaN(ageNumber) || ageNumber < 0) {
+        setError("Please enter a valid number for service years.");
         return;
       }
 
@@ -69,12 +72,15 @@ export default function SignupPage() {
       formData.append("age", ageNumber.toString());
       formData.append("email", email);
       formData.append("password", password);
+      formData.append("role", "business");
       if (profile) {
         formData.append("profile", profile);
       }
 
       const res = await Axios.post("/user", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (res.status === 200 || res.status === 201) {
@@ -105,7 +111,7 @@ export default function SignupPage() {
         <form onSubmit={handleSignup} className="space-y-4">
           <div>
             <label htmlFor="name" className="block mb-1 font-medium">
-              Full Name
+              Business Name
             </label>
             <input
               type="text"
@@ -131,21 +137,27 @@ export default function SignupPage() {
 
           <div>
             <label htmlFor="age" className="block mb-1 font-medium">
-              Age
+              Service (in years)
             </label>
+            <div className="flex text-accent gap-2">
+              <InfoIcon width={17} />{" "}
+              <span className="pb-1">
+                How long your business/shop has been running
+              </span>
+            </div>
             <input
               type="number"
               id="age"
               value={age}
               onChange={(e) => setAge(e.target.value)}
               className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              min={12}
+              min={0}
             />
           </div>
 
           <div>
             <label htmlFor="email" className="block mb-1 font-medium">
-              Email
+              Business Email
             </label>
             <input
               type="email"

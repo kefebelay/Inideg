@@ -13,7 +13,6 @@ import { UserIcon } from "lucide-react";
 
 export default function Navbar() {
   const { user } = useAppSelector((state: RootState) => state.user);
-  console.log(user);
   const pathname = usePathname();
 
   const navLinks = [
@@ -57,10 +56,13 @@ export default function Navbar() {
 
         {user ? (
           <div className="flex gap-5">
-            <div className="flex-col items-center hover:cursor-pointer">
+            <Link
+              href={"/profile"}
+              className="flex-col items-center hover:cursor-pointer"
+            >
               <UserIcon className="text-primary" />
               <p className="text-primary font-extrabold">{user.username}</p>
-            </div>
+            </Link>
             <Logout />
           </div>
         ) : (

@@ -44,7 +44,7 @@ export default function AboutContactSection() {
       {/* CTA Button */}
       <div className="text-center mt-16">
         <Link
-          href="/signup"
+          href="/auth/business/signup"
           className={buttonVariants({ variant: "default", size: "lg" })}
         >
           Promote Your Business Now

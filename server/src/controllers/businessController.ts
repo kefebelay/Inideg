@@ -1,26 +1,55 @@
 import { Request, Response } from "express";
+import Category from "../models/Category";
+import Like from "../models/Like";
+
 import Business from "../models/Business";
+import fs from "fs";
+import cloudinary from "../cloudinary.config";
 
 export async function createBusiness(req: Request, res: Response) {
   try {
-    const business = new Business(req.body);
     const existingBusiness = await Business.findOne({
-      name: business.name,
-      owner: business.owner,
+      name: req.body.name,
     });
     if (existingBusiness) {
       res.status(400).json({ error: "Business already exists" });
       return;
     }
+    const files = req.files as Express.Multer.File[];
+    const uploadedImages: string[] = [];
+
+    for (const file of files) {
+      const result = await cloudinary.uploader.upload(file.path, {
+        folder: "business_profiles",
+      });
+
+      uploadedImages.push(result.secure_url);
+
+      fs.unlink(file.path, (err) => {
+        if (err) {
+          console.error("Failed to delete local file:", file.path, err);
+        }
+      });
+    }
+
+    const business = new Business({
+      ...req.body,
+      profile: uploadedImages,
+      likes: [],
+    });
+
     const savedBusiness = await business.save();
+
     if (!savedBusiness) {
       res.status(500).json({ error: "Failed to create business" });
       return;
     }
+
     res
       .status(201)
       .json({ message: "Business created", business: savedBusiness });
   } catch (err: any) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -28,8 +57,7 @@ export async function getBusinesses(req: Request, res: Response) {
   try {
     const businesses = await Business.find()
       .populate("owner")
-      .populate("category")
-      .populate("like");
+      .populate("category");
     res.status(200).json({ message: "Businesses fetched", businesses });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -37,11 +65,7 @@ export async function getBusinesses(req: Request, res: Response) {
 }
 export async function getBusiness(req: Request, res: Response) {
   try {
-    const business = await Business.findById(
-      req.params.id,
-      { $inc: { views: 1 } },
-      { new: true }
-    )
+    const business = await Business.findById(req.params.id)
       .populate("owner")
       .populate("category");
     if (!business) {
@@ -53,23 +77,7 @@ export async function getBusiness(req: Request, res: Response) {
     res.status(500).json({ error: err.message });
   }
 }
-export async function updateBusiness(req: Request, res: Response) {
-  try {
-    const business = await Business.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    })
-      .populate("owner")
-      .populate("category")
-      .populate("like");
-    if (!business) {
-      res.status(404).json({ error: "Business not found" });
-      return;
-    }
-    res.status(200).json({ message: "Business updated", business });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-}
+
 export async function deleteBusiness(req: Request, res: Response) {
   try {
     const business = await Business.findByIdAndDelete(req.params.id);

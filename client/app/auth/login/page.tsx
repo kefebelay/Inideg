@@ -51,11 +51,7 @@ export default function LoginPage() {
       } else {
         toast.error("Login failed. Please try again.");
       }
-
-      console.log("Login response:", res.data);
     } catch (err: any) {
-      console.error("Login error:", err);
-
       if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {

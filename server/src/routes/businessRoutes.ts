@@ -3,9 +3,7 @@ import {
   createBusiness,
   getBusinesses,
   getBusiness,
-  updateBusiness,
   deleteBusiness,
-  likeBusiness,
   getMostViewedBusinesses,
   getMostLikedBusinesses,
   getMostCommentedBusinesses,
@@ -13,17 +11,17 @@ import {
   searchBusinesses,
   getBusinessByOwner,
 } from "../controllers/businessController";
+import { upload } from "../middleware/multerDisk";
 
 const router = express.Router();
-router.post("/", createBusiness);
+router.post("/", upload.array("profile", 5), createBusiness);
 router.get("/", getBusinesses);
 router.get("/:id", getBusiness);
-router.put("/:id", updateBusiness);
 router.delete("/:id", deleteBusiness);
-router.post("/:id/like", likeBusiness);
 router.get("/most-viewed", getMostViewedBusinesses);
 router.get("/most-liked", getMostLikedBusinesses);
 router.get("/most-commented", getMostCommentedBusinesses);
 router.get("/category/:categoryId", getBusinessByCategory);
 router.get("/search", searchBusinesses);
 router.get("/owner/:ownerId", getBusinessByOwner);
+export default router;
