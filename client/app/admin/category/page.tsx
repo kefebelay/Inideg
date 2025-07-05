@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Folder, X } from "lucide-react";
 import Axios from "@/lib/axios";
 import { toast } from "react-toastify";
+import { useDropzone } from "react-dropzone";
 
 interface Category {
   _id: string;
@@ -33,6 +34,18 @@ export default function CategoriesPage() {
     };
     getCategories();
   }, []);
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setImage(acceptedFiles[0]);
+    }
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "image/*": [] },
+    maxFiles: 1,
+  });
 
   async function handleAddCategory() {
     if (name.trim() === "") return;
@@ -98,12 +111,28 @@ export default function CategoriesPage() {
                 onChange={(e) => setName(e.target.value)}
                 className="flex-1 w-36 bg-[--color-input] border-[--color-border] text-[--color-foreground]"
               />
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files?.[0] || null)}
-                className="bg-[--color-input] border-[--color-border] text-[--color-foreground] w-40"
-              />
+
+              {/* Dropzone for Image */}
+              <div
+                {...getRootProps()}
+                className={`w-40 flex items-center justify-center px-4 py-2 border-2 border-dashed rounded cursor-pointer text-center ${
+                  isDragActive
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-[--color-input]"
+                }`}
+              >
+                <input {...getInputProps()} />
+                {image ? (
+                  <span className="truncate" title={image.name}>
+                    {image.name}
+                  </span>
+                ) : (
+                  <span className="text-[--color-muted-foreground]">
+                    Drag & drop or click to select
+                  </span>
+                )}
+              </div>
+
               <Button
                 type="submit"
                 className="bg-[--color-primary] text-[--color-primary-foreground] hover:cursor-pointer border border-[--color-primary]"

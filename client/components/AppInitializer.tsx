@@ -6,6 +6,16 @@ import { usePathname, useRouter } from "next/navigation";
 import type { AppDispatch, RootState } from "@/lib/store";
 import { fetchCurrentUser } from "@/lib/features/user/userSlice";
 
+const publicRoutes = [
+  /^\/$/,
+  /^\/auth\/login$/,
+  /^\/auth\/sign-up$/,
+  /^\/home$/,
+  /^\/categories(\/[^\/]+)?$/,
+  /^\/category(\/[^\/]+)?$/,
+  /^\/businesses(\/[^\/]+)?$/,
+];
+
 const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -13,34 +23,46 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({
   const router = useRouter();
   const pathname = usePathname();
   const { user, status } = useSelector((state: RootState) => state.user);
-  const publicRoutes = [
-    "/",
-    "/auth/login",
-    "/auth/sign-up",
-    "/home",
-    pathname.startsWith("/categories"),
-  ];
+
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 
   useEffect(() => {
+    // Always redirect "/" to "/home"
     if (pathname === "/") {
       router.replace("/home");
+      return;
     }
-    if (status === "authenticated" && pathname === "/home") {
-      if (!user) {
-        router.replace("/home");
-      } else if (user.role === "user") {
-        router.replace("/home");
-      } else if (user.role === "admin") {
-        router.replace("/admin");
-      } else if (user.role === "business") {
-        router.replace("/business");
-      }
-    }
-    if (status === "loading" && !publicRoutes.includes(pathname)) {
+
+    // Wait for auth status to resolve
+    if (status === "loading") return;
+
+    const isPublic = publicRoutes.some((route) =>
+      typeof route === "string"
+        ? pathname === route || pathname.startsWith(route + "/")
+        : route.test(pathname)
+    );
+
+    // If not authenticated and not on a public route, redirect to /home
+    if (status !== "authenticated" && !isPublic) {
       router.replace("/home");
+      return;
+    }
+
+    // If authenticated, redirect to dashboard based on role if on a public route
+    if (status === "authenticated" && user) {
+      if (
+        pathname === "/home" ||
+        pathname === "/auth/login" ||
+        pathname === "/auth/sign-up"
+      ) {
+        if (user.role === "admin") {
+          router.replace("/admin");
+        } else if (user.role === "business") {
+          router.replace("/business");
+        } // user.role === "user" stays on /home
+      }
     }
   }, [status, user, pathname, router]);
 

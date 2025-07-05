@@ -10,6 +10,8 @@ import {
   getBusinessByCategory,
   searchBusinesses,
   getBusinessByOwner,
+  toggleBusinessLike,
+  getBusinessesUserLikes,
 } from "../controllers/businessController";
 import { upload } from "../middleware/multerDisk";
 
@@ -20,6 +22,8 @@ router.get("/:id", getBusiness);
 router.delete("/:id", deleteBusiness);
 router.get("/most-viewed", getMostViewedBusinesses);
 router.get("/most-liked", getMostLikedBusinesses);
+router.get("/liked", getBusinessesUserLikes);
+router.get("/toggle-like", toggleBusinessLike);
 router.get("/most-commented", getMostCommentedBusinesses);
 router.get("/category/:categoryId", getBusinessByCategory);
 router.get("/search", searchBusinesses);

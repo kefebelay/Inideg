@@ -1,4 +1,5 @@
 import mongoose, { InferSchemaType, model } from "mongoose";
+import { boolean } from "zod";
 
 const businessSchema = new mongoose.Schema(
   {
@@ -8,8 +9,7 @@ const businessSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "like" }],
-    views: { type: Number, default: 0 },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     profile: { type: [String], required: true },
     location: {
       address: { type: String, required: true },

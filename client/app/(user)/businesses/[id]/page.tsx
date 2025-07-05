@@ -11,6 +11,7 @@ type Business = {
   description: string;
   contactEmail: string;
   phone: string;
+  views: string;
   website: string;
   isVerified: boolean;
   category: { name: string };
@@ -39,11 +40,13 @@ export default function BusinessDetailsPage() {
   }, [id]);
 
   if (!business) {
-    return <p className="p-6 text-[--color-muted-foreground]">Loading...</p>;
+    return (
+      <p className="p-6 text-[--color-muted-foreground] mt-20">Loading...</p>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-[--color-card] text-[--color-card-foreground] rounded-[--radius-lg] shadow">
+    <div className="max-w-4xl mt-20 mx-auto p-6 bg-[--color-card] text-[--color-card-foreground] rounded-[--radius-lg] shadow">
       <h1 className="text-3xl font-bold mb-4">{business.name}</h1>
 
       <div className="grid md:grid-cols-2 gap-4 mb-6">
@@ -79,6 +82,9 @@ export default function BusinessDetailsPage() {
       <p className="mb-2">
         <strong>Status:</strong>{" "}
         {business.isVerified ? "Verified ✅" : "Unverified ❌"}
+      </p>
+      <p className="mb-2">
+        <strong>Views:</strong> {business.views}
       </p>
       <p className="mt-4">
         <strong>Description:</strong>

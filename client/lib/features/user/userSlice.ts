@@ -6,6 +6,7 @@ export interface User {
   email: string;
   profile?: string;
   username: string;
+  role: string;
 }
 interface UserState {
   user: User | null;
