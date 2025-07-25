@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/mydatabase";
+  process.env.MONGODB_URI_WEB || "mongodb://localhost:27017/mydatabase";
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
