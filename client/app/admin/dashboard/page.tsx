@@ -152,7 +152,7 @@ export default function AdminDashboard() {
                 key={role}
                 className="px-3 py-1 rounded bg-[--color-muted] text-[--color-primary] font-semibold"
               >
-                {role}: {count}
+                {String(role)}: {String(count)}
               </div>
             ))}
           </div>
