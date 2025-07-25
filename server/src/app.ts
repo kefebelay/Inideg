@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import mainRouter from "./routes";
 import dotenv from "dotenv";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
 // import { createDefaultAdmin } from "./utils/createAdmin"; // Optional
 // import "./cloudinary.config"; // Optional
@@ -14,9 +14,28 @@ const MONGODB_URI = process.env.MONGODB_URI_WEB || "";
 
 // Middleware
 app.use(express.json());
-app.use(cors());
 app.use(cookieParser());
+const allowedOrigins: string[] = [
+  "http://localhost:3000",
+  "https://your-production-frontend.com",
+];
 
+const corsOptions: CorsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(cors());
 // API Routes
 app.use("/api", mainRouter);
 
