@@ -11,17 +11,17 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 
-interface Item {
-  _id: string;
-  name: string;
-  description: string;
-  profile?: string[];
-  category?: { name: string };
-  likes: string[];
-  isLiked: boolean;
-}
-
 const CategoryItemsPage: React.FC = () => {
+  interface Item {
+    _id: string;
+    name: string;
+    description: string;
+    profile?: string[];
+    category?: { name: string };
+    likes: string[];
+    isLiked: boolean;
+  }
+
   const params = useParams();
   const categoryId = params?.id as string;
   const { user } = useSelector((state: RootState) => state.user);
