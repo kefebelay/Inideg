@@ -12,20 +12,23 @@ import {
   getBusinessByOwner,
   toggleBusinessLike,
   getBusinessesUserLikes,
+  getBusinessAndIncrementViews,
+  verifyBusiness,
 } from "../controllers/businessController";
 import { upload } from "../middleware/multerDisk";
 
 const router = express.Router();
 router.post("/", upload.array("profile", 5), createBusiness);
 router.get("/", getBusinesses);
-router.get("/:id", getBusiness);
-router.delete("/:id", deleteBusiness);
+router.get("/search", searchBusinesses);
 router.get("/most-viewed", getMostViewedBusinesses);
 router.get("/most-liked", getMostLikedBusinesses);
-router.get("/liked", getBusinessesUserLikes);
-router.get("/toggle-like", toggleBusinessLike);
-router.get("/most-commented", getMostCommentedBusinesses);
+router.get("/:userId/liked", getBusinessesUserLikes);
 router.get("/category/:categoryId", getBusinessByCategory);
-router.get("/search", searchBusinesses);
+router.patch("/:id/verify", verifyBusiness);
+router.post("/toggle-like", toggleBusinessLike);
 router.get("/owner/:ownerId", getBusinessByOwner);
+router.get("/:id", getBusiness);
+router.get("/:id/view", getBusinessAndIncrementViews);
+router.delete("/:id", deleteBusiness);
 export default router;

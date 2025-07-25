@@ -1,5 +1,6 @@
 import { Ubuntu } from "next/font/google";
 import Sidebar from "@/components/admin/sidebar";
+import RouteGuard from "@/components/RouteGuard";
 
 const ubuntu = Ubuntu({
   weight: ["400", "500", "700"],
@@ -15,7 +16,9 @@ export default function AdminLayout({
 }) {
   return (
     <div className={ubuntu.className}>
-      <Sidebar>{children}</Sidebar>
+      <RouteGuard>
+        <Sidebar>{children}</Sidebar>
+      </RouteGuard>
     </div>
   );
 }

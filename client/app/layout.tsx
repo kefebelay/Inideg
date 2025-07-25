@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
-import { Ubuntu } from "next/font/google"; // ✅ Replace Geist with Ubuntu
+import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import ToastProvider from "@/components/common/ToastProvider";
-import AppInitializer from "@/components/AppInitializer";
+import RouteGuard from "@/components/RouteGuard";
 
-// ✅ Use Ubuntu font with variable
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
   subsets: ["latin"],
-  weight: ["400", "500", "700"], // adjust as needed
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -25,10 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${ubuntu.variable} antialiased suppressHydrationWarning`}
+        className={`${ubuntu.variable} antialiased suppressHydrationWarning `}
       >
         <StoreProvider>
-          <AppInitializer>{children}</AppInitializer>
+          <RouteGuard>{children}</RouteGuard>
         </StoreProvider>
         <ToastProvider />
       </body>

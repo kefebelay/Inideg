@@ -40,14 +40,16 @@ export default function LoginPage() {
           const user = resultAction.payload;
 
           if (user.role === "admin") {
-            router.push("/admin");
+            router.replace("/admin");
+            toast.success("Welcome back admin");
           } else if (user.role === "business") {
-            router.push("/business");
+            router.replace("/business");
+            toast.success("Welcome back");
           } else {
             router.push("/home");
+            toast.success("Welcome back : )");
           }
         }
-        toast.success("Logged in successfully!");
       } else {
         toast.error("Login failed. Please try again.");
       }

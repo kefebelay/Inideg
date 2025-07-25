@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const businessController_1 = require("../controllers/businessController");
+const multerDisk_1 = require("../middleware/multerDisk");
+const router = express_1.default.Router();
+router.post("/", multerDisk_1.upload.array("profile", 5), businessController_1.createBusiness);
+router.get("/", businessController_1.getBusinesses);
+router.get("/search", businessController_1.searchBusinesses);
+router.get("/most-viewed", businessController_1.getMostViewedBusinesses);
+router.get("/most-liked", businessController_1.getMostLikedBusinesses);
+router.get("/:userId/liked", businessController_1.getBusinessesUserLikes);
+router.get("/category/:categoryId", businessController_1.getBusinessByCategory);
+router.patch("/:id/verify", businessController_1.verifyBusiness);
+router.post("/toggle-like", businessController_1.toggleBusinessLike);
+router.get("/owner/:ownerId", businessController_1.getBusinessByOwner);
+router.get("/:id", businessController_1.getBusiness);
+router.get("/:id/view", businessController_1.getBusinessAndIncrementViews);
+router.delete("/:id", businessController_1.deleteBusiness);
+exports.default = router;

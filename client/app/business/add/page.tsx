@@ -103,6 +103,20 @@ const CreateBusinessPage = () => {
       });
 
       toast.success("Business created successfully!");
+      setForm({
+        name: "",
+        address: "",
+        city: "",
+        coordinates: "",
+        website: "",
+        contactEmail: "",
+        phone: "",
+        description: "",
+        isVerified: false,
+        category: "",
+      });
+
+      setImages([]);
     } catch (error) {
       console.error(error);
       toast.error("Failed to create business.");

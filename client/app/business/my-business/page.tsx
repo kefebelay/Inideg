@@ -5,6 +5,7 @@ import type { RootState } from "@/lib/store";
 import Axios from "@/lib/axios";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { EyeIcon } from "lucide-react";
 
 interface Business {
   _id: string;
@@ -131,19 +132,7 @@ export default function MyBusinessPage() {
               </p>
               <div className="flex gap-3 text-xs text-[--color-muted-foreground] mb-2">
                 <span className="flex items-center gap-1">
-                  <svg
-                    className="w-4 h-4 text-[--color-primary]"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 10l4.553-2.276A2 2 0 0020 6.382V5a2 2 0 00-2-2H6a2 2 0 00-2 2v1.382a2 2 0 00.447 1.342L9 10m6 0v10a2 2 0 01-2 2H9a2 2 0 01-2-2V10m9 0H6"
-                    ></path>
-                  </svg>
+                  <EyeIcon height={20} />
                   {business.views} Views
                 </span>
                 <span className="flex items-center gap-1">

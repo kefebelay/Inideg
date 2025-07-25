@@ -35,8 +35,8 @@ export default function SignupPage() {
     e.preventDefault();
 
     try {
-      if (!name || !username || !age || !email || !password) {
-        setError("All fields are required.");
+      if (!name || name.length < 1 || name.length > 255) {
+        setError("Name is required and must be less than 256 characters.");
         return;
       }
 
@@ -46,18 +46,18 @@ export default function SignupPage() {
       }
 
       const ageNumber = Number(age);
-      if (isNaN(ageNumber) || ageNumber < 12) {
-        setError("You must be at least 12 years old.");
+      if (isNaN(ageNumber) || ageNumber < 12 || ageNumber > 120) {
+        setError("Age must be a number between 1 and 120.");
         return;
       }
 
-      if (!/\S+@\S+\.\S+/.test(email)) {
-        setError("Please enter a valid email address.");
+      if (!email || !/\S+@\S+\.\S+/.test(email) || email.length > 255) {
+        setError("Please enter a valid email address (max 255 characters).");
         return;
       }
 
-      if (password.length < 6) {
-        setError("Password must be at least 6 characters long.");
+      if (!password || password.length < 6 || password.length > 255) {
+        setError("Password must be between 6 and 255 characters.");
         return;
       }
 
@@ -76,7 +76,6 @@ export default function SignupPage() {
       const res = await Axios.post("/user", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       if (res.status === 200 || res.status === 201) {
         toast.success("Account created successfully");
         router.push("/auth/login");
@@ -139,7 +138,7 @@ export default function SignupPage() {
               value={age}
               onChange={(e) => setAge(e.target.value)}
               className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              min={12}
+              min={1}
             />
           </div>
 

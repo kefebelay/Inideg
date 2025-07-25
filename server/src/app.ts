@@ -4,7 +4,7 @@ import mainRouter from "./routes";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { createDefaultAdmin } from "./createAdmin";
+import { createDefaultAdmin } from "./utils/createAdmin";
 import "./cloudinary.config";
 
 dotenv.config();

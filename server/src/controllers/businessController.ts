@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import Category from "../models/Category";
 import Like from "../models/Like";
-
+import {
+  decorateBusiness,
+  decorateBusinesses,
+} from "../utils/decorateBusiness";
 import Business from "../models/Business";
 import fs from "fs";
 import cloudinary from "../cloudinary.config";
@@ -53,19 +56,32 @@ export async function createBusiness(req: Request, res: Response) {
     res.status(500).json({ error: err.message });
   }
 }
+
 export async function getBusinesses(req: Request, res: Response) {
   try {
+    const userId = req.query.userId as string;
+
     const businesses = await Business.find()
       .populate("owner")
       .populate("category")
-      .populate("likes");
-    res.status(200).json({ message: "Businesses fetched", businesses });
+      .lean();
+
+    const decorated = decorateBusinesses(businesses, userId);
+
+    res.status(200).json({
+      message: "Businesses fetched",
+      businesses: decorated,
+    });
   } catch (err: any) {
+    console.error("getBusinesses error:", err);
     res.status(500).json({ error: err.message });
   }
 }
+
 export async function getBusiness(req: Request, res: Response) {
   try {
+    const { userId } = req.query;
+
     const business = await Business.findByIdAndUpdate(
       req.params.id,
       { $inc: { views: 1 } },
@@ -73,15 +89,64 @@ export async function getBusiness(req: Request, res: Response) {
     )
       .populate("owner")
       .populate("category")
-      .populate("likes");
+      .lean();
 
     if (!business) {
       res.status(404).json({ error: "Business not found" });
       return;
     }
 
-    res.status(200).json({ message: "Business fetched", business });
+    const isLiked = Boolean(
+      userId && business.likes?.some((id: any) => id.toString() === userId)
+    );
+
+    res.status(200).json({
+      message: "Business fetched",
+      business: {
+        ...business,
+        isLiked,
+        likes: business.likes?.map((id: any) => id.toString()) || [],
+      },
+    });
   } catch (err: any) {
+    console.error("GetBusiness error:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
+export async function getBusinessAndIncrementViews(
+  req: Request,
+  res: Response
+) {
+  try {
+    const { userId } = req.query;
+
+    const business = await Business.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { views: 1 } },
+      { new: true }
+    )
+      .populate("owner")
+      .populate("category")
+      .lean();
+
+    if (!business) {
+      res.status(404).json({ error: "Business not found" });
+      return;
+    }
+
+    const isLiked =
+      userId && business.likes?.some((id: any) => id.toString() === userId);
+
+    res.status(200).json({
+      message: "Business fetched",
+      business: {
+        ...business,
+        isLiked: Boolean(isLiked),
+        likes: business.likes.map((id: any) => id.toString()),
+      },
+    });
+  } catch (err: any) {
+    console.error("Error:", err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -118,7 +183,7 @@ export async function getMyBusiness(req: Request, res: Response) {
 export async function getMostViewedBusinesses(req: Request, res: Response) {
   try {
     const businesses = await Business.find()
-      .sort({ views: -1 }) // Descending
+      .sort({ views: -1 })
       .populate("owner")
       .populate("category")
       .populate("likes");
@@ -168,7 +233,7 @@ export async function getMostLikedBusinesses(req: Request, res: Response) {
 export async function getMostCommentedBusinesses(req: Request, res: Response) {
   try {
     const businesses = await Business.find()
-      .sort({ comments: -1 }) // Descending
+      .sort({ comments: -1 })
       .populate("owner")
       .populate("category")
       .populate("likes");
@@ -177,21 +242,41 @@ export async function getMostCommentedBusinesses(req: Request, res: Response) {
     res.status(500).json({ error: err.message });
   }
 }
+
 export async function getBusinessByCategory(req: Request, res: Response) {
   try {
-    const items = await Business.find({ category: req.params.categoryId })
+    const { userId } = req.query;
+    const { categoryId } = req.params;
+
+    const items = await Business.find({ category: categoryId })
       .populate("owner")
       .populate("category")
-      .populate("likes");
+      .lean();
+
     if (!items || items.length === 0) {
       res.status(404).json({ error: "No items found in this category" });
       return;
     }
-    res.status(200).json({ message: "items fetched", items });
+
+    const decorated = items.map((item) => {
+      const likeIds = item.likes?.map((id: any) => id.toString()) || [];
+      return {
+        ...item,
+        isLiked: userId ? likeIds.includes(userId.toString()) : false,
+        likes: likeIds,
+      };
+    });
+
+    res.status(200).json({
+      message: "Items fetched",
+      businesses: decorated,
+    });
   } catch (err: any) {
+    console.error("getBusinessByCategory error:", err);
     res.status(500).json({ error: err.message });
   }
 }
+
 export async function searchBusinesses(req: Request, res: Response) {
   try {
     const { query } = req.query;
@@ -212,19 +297,26 @@ export async function searchBusinesses(req: Request, res: Response) {
 }
 export async function getBusinessByOwner(req: Request, res: Response) {
   try {
-    const businesses = await Business.find({ owner: req.params.ownerId })
+    const userId = req.query.userId as string;
+    const ownerId = req.params.ownerId;
+
+    const businesses = await Business.find({ owner: ownerId })
       .populate("owner")
       .populate("category")
-      .populate("likes");
-    if (!businesses || businesses.length === 0) {
-      res.status(404).json({ error: "No businesses found for this owner" });
-      return;
-    }
-    res.status(200).json({ message: "Businesses fetched", businesses });
+      .populate("likes")
+      .lean();
+
+    const decorated = decorateBusinesses(businesses, userId);
+
+    res
+      .status(200)
+      .json({ message: "Owner's businesses", businesses: decorated });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 }
+import mongoose from "mongoose";
+
 export async function toggleBusinessLike(req: Request, res: Response) {
   try {
     const { businessId, userId } = req.body;
@@ -235,30 +327,26 @@ export async function toggleBusinessLike(req: Request, res: Response) {
       return;
     }
 
+    const userObjectId = new mongoose.Types.ObjectId(userId); //
     const alreadyLiked = business.likes.some((id) => id.toString() === userId);
 
     if (alreadyLiked) {
       business.likes = business.likes.filter((id) => id.toString() !== userId);
     } else {
-      business.likes.push(userId);
+      business.likes.push(userObjectId);
     }
 
     await business.save();
 
-    const updatedBusiness = await Business.findById(businessId)
-      .populate("owner")
-      .populate("category")
-      .populate("likes");
-
     res.status(200).json({
       message: alreadyLiked ? "Unliked" : "Liked",
-      business: updatedBusiness,
     });
   } catch (err: any) {
     console.error("Toggle Like Error:", err);
     res.status(500).json({ error: err.message });
   }
 }
+
 export async function getBusinessesUserLikes(req: Request, res: Response) {
   try {
     const userId = req.params.userId;
@@ -274,3 +362,28 @@ export async function getBusinessesUserLikes(req: Request, res: Response) {
     res.status(500).json({ error: err.message });
   }
 }
+export const verifyBusiness = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { isVerified } = req.body;
+
+  try {
+    const business = await Business.findByIdAndUpdate(
+      id,
+      { isVerified },
+      { new: true }
+    );
+
+    if (!business) {
+      res.status(404).json({ message: "Business not found" });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Business verification status updated",
+      business,
+    });
+  } catch (error) {
+    console.error("Verification update error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

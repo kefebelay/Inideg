@@ -16,7 +16,16 @@ import {
 import { Button } from "@/components/ui/button";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
 import { cn } from "@/lib/utils";
-import Logout from "../Logout";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { useLogout } from "@/components/Logout";
 
 const ubuntu = Ubuntu({
   weight: ["300", "400", "500", "700"],
@@ -48,13 +57,9 @@ const sidebarItems = [
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const router = useRouter();
+  const [showLogout, setShowLogout] = useState(false);
   const pathname = usePathname();
-
-  const handleLogout = () => {
-    console.log("Logging out...");
-    router.push("/auth/login");
-  };
+  const handleLogout = useLogout();
 
   return (
     <div
@@ -106,9 +111,16 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
 
-        {/* Logout */}
+        {/* Logout with Confirmation */}
         <div className="p-4">
-          <Logout />
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-4 px-5 py-4 rounded-xl text-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
+            onClick={() => setShowLogout(true)}
+          >
+            <LogOut className="w-6 h-6" />
+            {sidebarOpen && <span>Logout</span>}
+          </Button>
         </div>
       </aside>
 
@@ -127,6 +139,29 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
+
+      {/* Global Logout Dialog */}
+      <Dialog open={showLogout} onOpenChange={setShowLogout}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Are you sure you want to log out?</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="ghost">Cancel</Button>
+            </DialogClose>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                handleLogout();
+                setShowLogout(false);
+              }}
+            >
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

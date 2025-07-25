@@ -10,6 +10,8 @@ const businessSchema = new mongoose.Schema(
       required: true,
     },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    views: { type: Number },
+    isLiked: { type: Boolean, default: false },
     profile: { type: [String], required: true },
     location: {
       address: { type: String, required: true },
