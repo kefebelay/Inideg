@@ -127,7 +127,7 @@ export default function BusinessListPage() {
               key={business._id}
               className="relative bg-card text-card-foreground rounded-xl shadow hover:shadow-lg hover:transition-transform hover:scale-101 transition-all overflow-hidden border border-border"
             >
-              <Link href={`/businesses/${business._id}`} className="block">
+              <Link href={`/biz/${business._id}`} className="block">
                 <img
                   src={business.profile?.[0] || "/placeholder.jpg"}
                   alt={business.name}

@@ -38,7 +38,7 @@ export default function Navbar() {
   const navLinks = [
     { label: "Home", href: "/home" },
     { label: "Categories", href: "/categories" },
-    { label: "Businesses", href: "/businesses" },
+    { label: "Businesses", href: "/biz" },
   ];
 
   const isActive = (href: string) => {
