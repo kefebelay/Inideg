@@ -4,6 +4,7 @@ import mainRouter from "./routes";
 import dotenv from "dotenv";
 import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
+import { createDefaultAdmin } from "./utils/createAdmin";
 // import { createDefaultAdmin } from "./utils/createAdmin"; // Optional
 // import "./cloudinary.config"; // Optional
 
@@ -17,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 const allowedOrigins: string[] = [
   "http://localhost:3000",
-  "https://your-production-frontend.com",
+  "https://inideg.vercel.app",
 ];
 
 const corsOptions: CorsOptions = {
@@ -43,8 +44,9 @@ mongoose
     console.log("✅ Successfully connected to MongoDB Atlas database: inideg");
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      console.log(`🚀 Server is running `);
     });
+    createDefaultAdmin();
   })
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err);
