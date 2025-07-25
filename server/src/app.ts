@@ -35,23 +35,18 @@ const corsOptions: CorsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(cors());
-// API Routes
 app.use("/api", mainRouter);
 
-// --- Main Connection Logic ---
-// Connect to MongoDB and start the server
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
     console.log("✅ Successfully connected to MongoDB Atlas database: inideg");
 
-    // Start listening for requests only after the DB connection is successful
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err);
-    process.exit(1); // Exit the process with an error code
+    process.exit(1);
   });
