@@ -40,7 +40,7 @@ const CategoryItemsPage: React.FC = () => {
       const res = await Axios.get(
         `/business/category/${categoryId}?page=${page}&limit=9&userId=${userId}`
       );
-      setItems(res.data.businesses || []); // assumes backend returns `businesses` field
+      setItems(res.data.businesses || []);
       setTotalPages(res.data.totalPages || 1);
     } catch (err: any) {
       setError("Failed to load items.");
@@ -98,7 +98,7 @@ const CategoryItemsPage: React.FC = () => {
                 key={item._id}
                 className="relative bg-card text-card-foreground rounded-xl shadow hover:shadow-md transition-all overflow-hidden border border-border"
               >
-                <Link href={`/businesses/${item._id}`} className="block">
+                <Link href={`/biz/${item._id}`} className="block">
                   <img
                     src={item.profile![0]}
                     alt={item.name}
