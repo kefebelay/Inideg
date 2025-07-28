@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/User";
 
-const JWT_SECRET = process.env.JWT_SECRET! || "Mikasa123";
+const JWT_SECRET = process.env.JWT_SECRET!;
 export async function login(req: Request, res: Response) {
   try {
     const { email, password } = req.body;
@@ -27,7 +27,7 @@ export async function login(req: Request, res: Response) {
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
-      sameSite: "lax",
+      sameSite: "none",
       maxAge: 60 * 60 * 1000,
     });
 
@@ -45,7 +45,7 @@ export function logout(req: Request, res: Response) {
   res.clearCookie("token", {
     httpOnly: true,
     secure: false,
-    sameSite: "lax",
+    sameSite: "none",
     maxAge: 60 * 60 * 1000,
   });
 
