@@ -19,6 +19,7 @@ app.use(cookieParser());
 const allowedOrigins: string[] = [
   "http://localhost:3000",
   "https://inideg.vercel.app",
+  "https://www.inideg.vercel.app",
 ];
 
 const corsOptions: CorsOptions = {
