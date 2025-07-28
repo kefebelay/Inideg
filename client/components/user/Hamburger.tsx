@@ -118,15 +118,16 @@ export default function Hamburger() {
                 <X className="h-6 w-6 text-muted-foreground" />
               </button>
             </div>
-
-            <Link
-              href="/favorites"
-              className="flex items-center gap-2 p-3 ml-8 text-sm hover:underline"
-            >
-              <div className="h-5 w-px bg-muted-foreground" />
-              <HeartIcon fill="red" stroke="none" width={15} height={15} />
-              <span>Favorites</span>
-            </Link>
+            {user && (
+              <Link
+                href="/favorites"
+                className="flex items-center gap-2 p-3 ml-8 text-sm hover:underline"
+              >
+                <div className="h-5 w-px bg-muted-foreground" />
+                <HeartIcon fill="red" stroke="none" width={15} height={15} />
+                <span>Favorites</span>
+              </Link>
+            )}
           </div>
 
           {/* Navigation */}
