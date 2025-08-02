@@ -12,14 +12,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI_WEB || "";
-
+const Frontend = process.env.FRONTEND || "";
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-const allowedOrigins: string[] = [
-  "http://localhost:3000",
-  "https://www.inideg.vercel.app",
-];
+const allowedOrigins: string[] = ["http://localhost:3000", Frontend];
 
 const corsOptions: CorsOptions = {
   origin: (
