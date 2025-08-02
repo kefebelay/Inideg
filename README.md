@@ -1,7 +1,7 @@
 # 🏪 Inideg
 
 A modern platform that connects users with local businesses and services across Ethiopia. Built to empower business owners to showcase their offerings and help users discover and interact with shops they love.
-
+[Live site](https://inideg.vercel.app)
 
 
 ---
